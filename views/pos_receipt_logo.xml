@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!--
+        Override de la plantilla del recibo del POS para mostrar el logo
+        de la Unidad Operativa cuando está disponible.
+
+        En Odoo 13, point_of_sale.receipt renderiza el logo así:
+            <img t-att-src="'data:image/png;base64,' + receipt.company.logo"/>
+        o bien:
+            <img class="logo" t-att-src="..."/>
+
+        Reemplazamos el nodo del logo para usar primero
+        receipt.company.operating_unit_report_logo si existe,
+        y si no, caemos al logo de compañía estándar.
+    -->
+    <t t-extend="point_of_sale.receipt" t-name="operating_unit_report_logo.receipt">
+        <t t-jquery=".pos-receipt-logo img, img.logo" t-operation="replace">
+            <img
+                t-att-src="
+                    (receipt.company.operating_unit_report_logo
+                        ? 'data:image/png;base64,' + receipt.company.operating_unit_report_logo
+                        : 'data:image/png;base64,' + receipt.company.logo)
+                "
+                style="max-height:200px; max-width:200px;"
+            />
+        </t>
+    </t>
+
+</templates>

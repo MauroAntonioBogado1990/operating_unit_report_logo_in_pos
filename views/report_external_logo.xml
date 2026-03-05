@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+    <!-- Support multiple external layouts (standard, background, boxed, clean) -->
+    <template id="external_layout_standard_our" inherit_id="web.external_layout_standard">
+      <xpath expr="//img" position="replace">
+        <t t-if="'operating_unit_id' in o.fields_get()">
+          <img t-if="o.operating_unit_id.report_logo" t-att-src="image_data_uri(o.operating_unit_id.report_logo)" style="max-height:45px;" alt="Logo"/>
+          <img t-elif="o.operating_unit_id.partner_id.image_1920" t-att-src="image_data_uri(o.operating_unit_id.partner_id.image_1920)" style="max-height:45px;" alt="Logo"/>
+        </t>
+        <t t-else="">
+          <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height:45px;" alt="Logo"/>
+        </t>
+      </xpath>
+    </template>
+
+    <template id="external_layout_background_our" inherit_id="web.external_layout_background">
+      <xpath expr="//img[hasclass('float-left')]" position="replace">
+        <t t-if="'operating_unit_id' in o.fields_get()">
+          <img t-if="o.operating_unit_id.report_logo" t-att-src="image_data_uri(o.operating_unit_id.report_logo)" class="float-left" alt="Logo"/>
+          <img t-elif="o.operating_unit_id.partner_id.image_1920" t-att-src="image_data_uri(o.operating_unit_id.partner_id.image_1920)" class="float-left" alt="Logo"/>
+        </t>
+        <t t-else="">
+          <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" class="float-left" alt="Logo"/>
+        </t>
+      </xpath>
+    </template>
+
+    <template id="external_layout_boxed_our" inherit_id="web.external_layout_boxed">
+      <xpath expr="//img" position="replace">
+        <t t-if="'operating_unit_id' in o.fields_get()">
+          <img t-if="o.operating_unit_id.report_logo" t-att-src="image_data_uri(o.operating_unit_id.report_logo)" alt="Logo"/>
+          <img t-elif="o.operating_unit_id.partner_id.image_1920" t-att-src="image_data_uri(o.operating_unit_id.partner_id.image_1920)" alt="Logo"/>
+        </t>
+        <t t-else="">
+          <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
+        </t>
+      </xpath>
+    </template>
+
+    <template id="external_layout_clean_our" inherit_id="web.external_layout_clean">
+      <xpath expr="//img" position="replace">
+        <t t-if="'operating_unit_id' in o.fields_get()">
+          <img t-if="o.operating_unit_id.report_logo" t-att-src="image_data_uri(o.operating_unit_id.report_logo)" alt="Logo"/>
+          <img t-elif="o.operating_unit_id.partner_id.image_1920" t-att-src="image_data_uri(o.operating_unit_id.partner_id.image_1920)" alt="Logo"/>
+        </t>
+        <t t-else="">
+          <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
+        </t>
+      </xpath>
+    </template>
+
+    <!--agregado de reporte de pos-->
+    <!-- <template id="pos_receipt_inherit_logo" inherit_id="OrderReceipt">
+  <xpath expr="//div[@class='pos-receipt']//img" position="replace">
+    <t t-if="order.operating_unit_id and order.operating_unit_id.report_logo">
+      <img t-att-src="'data:image/png;base64,%s' % order.operating_unit_id.report_logo.decode('utf-8')" style="max-height: 80px;"/>
+    </t>
+    <t t-else="">
+      <img t-att-src="'data:image/png;base64,%s' % order.company_id.logo.decode('utf-8')" style="max-height: 80px;"/>
+    </t>
+  </xpath>
+</template> -->
+
+
+  </data>
+</odoo>

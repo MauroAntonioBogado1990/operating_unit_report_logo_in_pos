@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <!-- Vista del formulario de Unidad Operativa: agrega campo report_logo -->
+    <record id="view_operating_unit_form_report_logo" model="ir.ui.view">
+      <field name="name">operating.unit.form.report.logo</field>
+      <field name="model">operating.unit</field>
+      <field name="inherit_id" ref="operating_unit.view_operating_unit_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='name']" position="after">
+          <field name="report_logo" widget="image" class="oe_avatar"/>
+        </xpath>
+      </field>
+    </record>
+
+    <!-- Vista de factura (account.move): agrega selector de Unidad Operativa -->
+    <record id="view_move_form_inherit_operating_unit" model="ir.ui.view">
+      <field name="name">account.move.form.inherit.operating.unit</field>
+      <field name="model">account.move</field>
+      <field name="inherit_id" ref="account.view_move_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='company_id']" position="after">
+          <field name="operating_unit_id" options="{'no_create': True}"/>
+        </xpath>
+      </field>
+    </record>
+
+    <!--
+        Vista de configuración del POS: agrega selector de Unidad Operativa.
+        REQUIERE que pos.config tenga el campo operating_unit_id definido en Python
+        (ver models/pos_config.py). El logo que se imprime en los recibos del POS
+        será el report_logo de la Unidad Operativa aquí seleccionada.
+    -->
+    <record id="view_pos_config_form_inherit_operating_unit" model="ir.ui.view">
+      <field name="name">pos.config.form.inherit.operating.unit</field>
+      <field name="model">pos.config</field>
+      <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//div[@id='title']" position="after">
+          <group string="Unidad Operativa">
+            <field name="operating_unit_id" options="{'no_create': True}"
+                   help="El logo de esta Unidad Operativa se usará en los recibos del POS."/>
+          </group>
+        </xpath>
+      </field>
+    </record>
+
+    <!-- Vista de diario (account.journal): agrega selector de Unidad Operativa -->
+    <record id="view_journal_form_inherit_operating_unit" model="ir.ui.view">
+      <field name="name">account.journal.form.inherit.operating.unit</field>
+      <field name="model">account.journal</field>
+      <field name="inherit_id" ref="account.view_account_journal_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='name']" position="after">
+          <field name="operating_unit_id" options="{'no_create': True}"/>
+        </xpath>
+      </field>
+    </record>
+
+  </data>
+</odoo>

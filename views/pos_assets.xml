@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_pos_receipt_logo"
+              name="OU Report Logo - POS Assets"
+              inherit_id="point_of_sale.assets">
+        <xpath expr="." position="inside">
+            <script type="text/javascript"
+                    src="/operating_unit_report_logo/static/src/js/pos_receipt_logo.js"/>
+        </xpath>
+    </template>
+</odoo>
