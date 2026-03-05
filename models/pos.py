@@ -5,28 +5,50 @@ from odoo import models, fields, api
 
 class PosConfig(models.Model):
     _inherit = 'pos.config'
-    
-    # Campo que el usuario selecciona manualmente en el formulario del POS
+
+    # Campo OPCIONAL: fallback si el invoice_journal_id no tiene OU asignada
     operating_unit_id = fields.Many2one(
         comodel_name='operating.unit',
-        string='Unidad Operativa',
-        help='Seleccione la Unidad Operativa cuyo logo se imprimirá en los recibos del POS.',
+        string='Unidad Operativa (manual)',
+        help='Opcional. Solo se usa si el Diario de Ventas del POS '
+             'no tiene una Unidad Operativa asignada.',
     )
 
-    # Campo computado que expone el binario del logo al frontend JS
+    # Logo computado con prioridad:
+    #   1. OU del invoice_journal_id (diario de ventas/facturas del POS)  ← PRIORIDAD
+    #   2. OU del campo manual operating_unit_id                           ← FALLBACK
     operating_unit_report_logo = fields.Binary(
         string='Logo de Unidad Operativa',
         compute='_compute_operating_unit_report_logo',
         store=False,
     )
 
-    @api.depends('operating_unit_id', 'operating_unit_id.report_logo')
+    @api.depends(
+        'invoice_journal_id',
+        'invoice_journal_id.operating_unit_id',
+        'invoice_journal_id.operating_unit_id.report_logo',
+        'operating_unit_id',
+        'operating_unit_id.report_logo',
+    )
     def _compute_operating_unit_report_logo(self):
         for config in self:
-            if config.operating_unit_id and config.operating_unit_id.report_logo:
-                config.operating_unit_report_logo = config.operating_unit_id.report_logo
-            else:
-                config.operating_unit_report_logo = False
+            logo = False
+
+            # PRIORIDAD: OU del diario de ventas (invoice_journal_id)
+            if (config.invoice_journal_id
+                    and config.invoice_journal_id.operating_unit_id
+                    and config.invoice_journal_id.operating_unit_id.report_logo):
+                logo = config.invoice_journal_id.operating_unit_id.report_logo
+
+            # FALLBACK: OU asignada manualmente en pos.config
+            elif (config.operating_unit_id
+                    and config.operating_unit_id.report_logo):
+                logo = config.operating_unit_id.report_logo
+
+            config.operating_unit_report_logo = logo
+
+
+
 
 class PosOrder(models.Model):
     _inherit = 'pos.order'

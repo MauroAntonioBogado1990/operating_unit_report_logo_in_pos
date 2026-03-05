@@ -2,7 +2,7 @@
 <odoo>
   <data>
 
-    <!-- Vista del formulario de Unidad Operativa: agrega campo report_logo -->
+    <!-- Unidad Operativa: agrega campo report_logo -->
     <record id="view_operating_unit_form_report_logo" model="ir.ui.view">
       <field name="name">operating.unit.form.report.logo</field>
       <field name="model">operating.unit</field>
@@ -14,24 +14,41 @@
       </field>
     </record>
 
-    <!-- Vista de factura (account.move): agrega selector de Unidad Operativa -->
+    <!-- account.move: muestra la OU como campo informativo (readonly).
+         El usuario NO la elige: se asigna automáticamente desde el diario. -->
     <record id="view_move_form_inherit_operating_unit" model="ir.ui.view">
       <field name="name">account.move.form.inherit.operating.unit</field>
       <field name="model">account.move</field>
       <field name="inherit_id" ref="account.view_move_form"/>
       <field name="arch" type="xml">
         <xpath expr="//field[@name='company_id']" position="after">
-          <field name="operating_unit_id" options="{'no_create': True}"/>
+          <field name="operating_unit_id"
+                 readonly="1"
+                 options="{'no_create': True}"
+                 attrs="{'invisible': [('operating_unit_id', '=', False)]}"
+                 help="Se asigna automáticamente según el Diario de Venta seleccionado."/>
         </xpath>
       </field>
     </record>
 
-    <!--
-        Vista de configuración del POS: agrega selector de Unidad Operativa.
-        REQUIERE que pos.config tenga el campo operating_unit_id definido en Python
-        (ver models/pos_config.py). El logo que se imprime en los recibos del POS
-        será el report_logo de la Unidad Operativa aquí seleccionada.
-    -->
+    <!-- account.journal: selector de Unidad Operativa.
+         Esta es la configuración clave: al asignar la OU al diario,
+         todas las facturas generadas con ese diario heredan su logo. -->
+    <record id="view_journal_form_inherit_operating_unit" model="ir.ui.view">
+      <field name="name">account.journal.form.inherit.operating.unit</field>
+      <field name="model">account.journal</field>
+      <field name="inherit_id" ref="account.view_account_journal_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='name']" position="after">
+          <field name="operating_unit_id"
+                 options="{'no_create': True}"
+                 help="El logo de esta Unidad Operativa se usará en todas las facturas emitidas con este diario."/>
+        </xpath>
+      </field>
+    </record>
+
+    <!-- pos.config: selector de Unidad Operativa para el POS.
+         El logo se imprimirá en todos los recibos de este punto de venta. -->
     <record id="view_pos_config_form_inherit_operating_unit" model="ir.ui.view">
       <field name="name">pos.config.form.inherit.operating.unit</field>
       <field name="model">pos.config</field>
@@ -39,23 +56,10 @@
       <field name="arch" type="xml">
         <xpath expr="//div[@id='title']" position="after">
           <group string="Unidad Operativa">
-            <field name="operating_unit_id" options="{'no_create': True}"
-                   help="El logo de esta Unidad Operativa se usará en los recibos del POS."/>
+            <field name="operating_unit_id"
+                   options="{'no_create': True}"
+                   help="El logo de esta Unidad Operativa se imprimirá en los recibos del POS."/>
           </group>
-        </xpath>
-      </field>
-    </record>
-
-    <!-- Vista de diario (account.journal): agrega selector de Unidad Operativa -->
-    <record id="view_journal_form_inherit_operating_unit" model="ir.ui.view">
-      <field name="name">account.journal.form.inherit.operating.unit</field>
-      <field name="model">account.journal</field>
-      <field name="inherit_id" ref="account.view_account_journal_form"/>
-      <field name="arch" type="xml">
-        <xpath expr="//field[@name='name']" position="after">
-          <br/>
-          <label for="operating_unit_id"/>
-          <field name="operating_unit_id" options="{'no_create': True}"/>
         </xpath>
       </field>
     </record>
