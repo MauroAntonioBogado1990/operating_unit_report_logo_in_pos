@@ -53,6 +53,8 @@
       <field name="inherit_id" ref="account.view_account_journal_form"/>
       <field name="arch" type="xml">
         <xpath expr="//field[@name='name']" position="after">
+          <br/>
+          <label for="operating_unit_id"/>
           <field name="operating_unit_id" options="{'no_create': True}"/>
         </xpath>
       </field>
