@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <data>
+  
 
     <!-- Unidad Operativa: agrega campo report_logo -->
     <record id="view_operating_unit_form_report_logo" model="ir.ui.view">
@@ -14,8 +14,7 @@
       </field>
     </record>
 
-    <!-- account.move: muestra la OU como campo informativo (readonly).
-         El usuario NO la elige: se asigna automáticamente desde el diario. -->
+    <!-- account.move: campo OU readonly, se asigna automáticamente desde el diario -->
     <record id="view_move_form_inherit_operating_unit" model="ir.ui.view">
       <field name="name">account.move.form.inherit.operating.unit</field>
       <field name="model">account.move</field>
@@ -26,14 +25,12 @@
                  readonly="1"
                  options="{'no_create': True}"
                  attrs="{'invisible': [('operating_unit_id', '=', False)]}"
-                 help="Se asigna automáticamente según el Diario de Venta seleccionado."/>
+                 help="Se asigna automáticamente desde el Diario de Venta."/>
         </xpath>
       </field>
     </record>
 
-    <!-- account.journal: selector de Unidad Operativa.
-         Esta es la configuración clave: al asignar la OU al diario,
-         todas las facturas generadas con ese diario heredan su logo. -->
+    <!-- account.journal: configuración principal de la OU -->
     <record id="view_journal_form_inherit_operating_unit" model="ir.ui.view">
       <field name="name">account.journal.form.inherit.operating.unit</field>
       <field name="model">account.journal</field>
@@ -42,13 +39,13 @@
         <xpath expr="//field[@name='name']" position="after">
           <field name="operating_unit_id"
                  options="{'no_create': True}"
-                 help="El logo de esta Unidad Operativa se usará en todas las facturas emitidas con este diario."/>
+                 help="Todas las facturas y recibos del POS asociados a este diario usarán el logo de esta Unidad Operativa."/>
         </xpath>
       </field>
     </record>
 
-    <!-- pos.config: selector de Unidad Operativa para el POS.
-         El logo se imprimirá en todos los recibos de este punto de venta. -->
+    <!-- pos.config: muestra el diario de ventas (fuente principal del logo)
+         y permite asignar una OU manual como fallback -->
     <record id="view_pos_config_form_inherit_operating_unit" model="ir.ui.view">
       <field name="name">pos.config.form.inherit.operating.unit</field>
       <field name="model">pos.config</field>
@@ -56,13 +53,21 @@
       <field name="arch" type="xml">
         <xpath expr="//div[@id='title']" position="after">
           <group string="Unidad Operativa">
+            <!--
+              El logo del recibo se toma del Diario de Ventas (invoice_journal_id).
+              Configurá la OU directamente en ese diario desde
+              Contabilidad > Configuración > Diarios.
+            -->
+            <field name="invoice_journal_id" readonly="1"
+                   string="Diario de Ventas (fuente del logo)"/>
+            <!-- Solo completar si el diario de ventas no tiene OU asignada -->
             <field name="operating_unit_id"
                    options="{'no_create': True}"
-                   help="El logo de esta Unidad Operativa se imprimirá en los recibos del POS."/>
+                   help="Opcional. Solo aplica si el Diario de Ventas no tiene Unidad Operativa asignada."/>
           </group>
         </xpath>
       </field>
     </record>
 
-  </data>
+  
 </odoo>
