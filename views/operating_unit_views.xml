@@ -37,6 +37,8 @@
       <field name="inherit_id" ref="account.view_account_journal_form"/>
       <field name="arch" type="xml">
         <xpath expr="//field[@name='name']" position="after">
+        <br/>
+        Unidad Operativa
           <field name="operating_unit_id"
                  options="{'no_create': True}"
                  help="Todas las facturas y recibos del POS asociados a este diario usarán el logo de esta Unidad Operativa."/>
@@ -52,20 +54,25 @@
       <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
       <field name="arch" type="xml">
         <xpath expr="//div[@id='title']" position="after">
-          <group string="Unidad Operativa">
+        <br/>
+        Unidad Operativa
+          <field name="operating_unit_id"
+                 options="{'no_create': True}"
+                 help="El logo de esta Unidad Operativa se usará en todas las facturas emitidas con este diario."/>
+        </xpath>
             <!--
               El logo del recibo se toma del Diario de Ventas (invoice_journal_id).
               Configurá la OU directamente en ese diario desde
               Contabilidad > Configuración > Diarios.
             -->
-            <field name="invoice_journal_id" readonly="1"
-                   string="Diario de Ventas (fuente del logo)"/>
+            <!-- <field name="invoice_journal_id" readonly="1"
+                   string="Diario de Ventas (fuente del logo)"/> -->
             <!-- Solo completar si el diario de ventas no tiene OU asignada -->
-            <field name="operating_unit_id"
+            <!-- <field name="operating_unit_id"
                    options="{'no_create': True}"
                    help="Opcional. Solo aplica si el Diario de Ventas no tiene Unidad Operativa asignada."/>
-          </group>
-        </xpath>
+           -->
+        
       </field>
     </record>
 
